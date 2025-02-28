@@ -13,13 +13,14 @@ import org.springframework.stereotype.Service;
 import com.paulino.recomendeme_challenge.dtos.Recommendation.CreateRecommendationDTO;
 import com.paulino.recomendeme_challenge.dtos.Recommendation.UpdateRecommendationDTO;
 import com.paulino.recomendeme_challenge.model.Recommendation;
-import com.paulino.recomendeme_challenge.repositories.RecommendationRepositoy;
+import com.paulino.recomendeme_challenge.repositories.RecommendationRepository;
+import com.paulino.recomendeme_challenge.types.RecommendationType;
 import com.paulino.recomendeme_challenge.utils.Functions;
 
 @Service
 public class RecommendationService {
     @Autowired
-    private RecommendationRepositoy recommendationRepository;
+    private RecommendationRepository recommendationRepository;
 
     public Recommendation createRecommendation(CreateRecommendationDTO createRecommendationDTO)
             throws BadRequestException {
@@ -33,6 +34,10 @@ public class RecommendationService {
         return recommendationRepository.findAll();
     }
 
+    public List<Recommendation> getAllRecommendationsFromAType(RecommendationType recommendationType) {
+        return recommendationRepository.findByType(recommendationType);
+    }
+
     public ResponseEntity<Object> getRecommendation(UUID id) {
         Optional<Recommendation> foundedRecommendation = recommendationRepository.findById(id);
 
@@ -40,6 +45,19 @@ public class RecommendationService {
             return Functions.returnNotFoundResponseEntity("Recommendation");
 
         return Functions.returnOkResponseEntity(foundedRecommendation);
+    }
+
+    public int[] getRecommendationsQuantityByType() {
+        int[] recommendationsQuantity = new int[3];
+
+        recommendationsQuantity[0] = (int) recommendationRepository
+                .recommendationsQuantityByType(RecommendationType.BOOK);
+        recommendationsQuantity[1] = (int) recommendationRepository
+                .recommendationsQuantityByType(RecommendationType.MOVIE);
+        recommendationsQuantity[2] = (int) recommendationRepository
+                .recommendationsQuantityByType(RecommendationType.SONG);
+
+        return recommendationsQuantity;
     }
 
     public ResponseEntity<Object> updateRecommendation(UUID id, UpdateRecommendationDTO updateRecommendationDTO) {
