@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -18,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.paulino.recomendeme_challenge.dtos.Recommendation.CreateRecommendationDTO;
-import com.paulino.recomendeme_challenge.dtos.Recommendation.UpdateRecommendationDTO;
 import com.paulino.recomendeme_challenge.model.Recommendation;
 import com.paulino.recomendeme_challenge.services.RecommendationService;
 import com.paulino.recomendeme_challenge.types.RecommendationType;
@@ -54,15 +54,23 @@ public class RecommendationController {
         return ResponseEntity.status(HttpStatus.OK).body(recommendationService.getAllRecommendationsFromAType(type));
     }
 
+    @GetMapping("/user")
+    public ResponseEntity<List<Recommendation>> getAllRecommendationsFromAUserId(
+            @RequestParam(value = "userId") String userId) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(recommendationService.getAllRecommendationsFromAUserId(userId));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Object> getRecommentation(@PathVariable(value = "id") UUID id) {
         return recommendationService.getRecommendation(id);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Object> updateRecommentation(@PathVariable(value = "id") UUID id,
-            @RequestBody @Valid UpdateRecommendationDTO RecommentationDTO) {
-        return recommendationService.updateRecommendation(id, RecommentationDTO);
+    @PatchMapping("/{recommendationId}/{userId}")
+    public ResponseEntity<Object> updateRecommendationRating(
+            @PathVariable(value = "recommendationId") UUID recommendationId,
+            @PathVariable(value = "userId") String userId) throws BadRequestException {
+        return recommendationService.updateRecommendationRating(recommendationId, userId);
     }
 
     @DeleteMapping("/{id}")

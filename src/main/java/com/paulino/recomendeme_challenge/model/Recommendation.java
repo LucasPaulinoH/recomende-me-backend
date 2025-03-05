@@ -1,7 +1,9 @@
 package com.paulino.recomendeme_challenge.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.annotation.CreatedDate;
@@ -31,14 +33,20 @@ public class Recommendation implements Serializable {
     @Column(name = "title", nullable = false, updatable = false)
     private String title;
 
-    @Column(name = "user_nickname", nullable = false, updatable = false)
-    private String userNickname;
+    @Column(name = "username", nullable = false, updatable = false)
+    private String username;
 
     @Column(name = "user_id", nullable = false, updatable = false)
-    private UUID userId;
+    private String userId;
 
-    @Column(name = "rating", nullable = false)
-    private Integer rating = 0;
+    @Column(name = "cover", updatable = false)
+    private String cover;
+
+    @Column(name = "authors", updatable = false)
+    private String[] authors;
+
+    @Column(name = "ratings", nullable = false)
+    private List<String> ratings = new ArrayList<>(0);
 
     @Column(name = "psychological_concept", nullable = false)
     private PsychologicalConcept psychologicalConcept;
@@ -53,12 +61,15 @@ public class Recommendation implements Serializable {
     public Recommendation() {
     }
 
-    public Recommendation(RecommendationType type, String title, String userNickname, UUID userId,
+    public Recommendation(RecommendationType type, String title, String username, String userId, String[] authors,
+            String cover,
             PsychologicalConcept psychologicalConcept, String psychologicalImpact) {
         this.type = type;
         this.title = title;
-        this.userNickname = userNickname;
+        this.username = username;
         this.userId = userId;
+        this.cover = cover;
+        this.authors = authors;
         this.psychologicalConcept = psychologicalConcept;
         this.psychologicalImpact = psychologicalImpact;
     }
@@ -87,28 +98,12 @@ public class Recommendation implements Serializable {
         this.title = title;
     }
 
-    public String getUserNickname() {
-        return userNickname;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUserNickname(String userNickname) {
-        this.userNickname = userNickname;
-    }
-
-    public UUID getUserId() {
-        return userId;
-    }
-
-    public void setUserId(UUID userId) {
-        this.userId = userId;
-    }
-
-    public Integer getRating() {
-        return rating;
-    }
-
-    public void setRating(Integer rating) {
-        this.rating = rating;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public PsychologicalConcept getPsychologicalConcept() {
@@ -134,4 +129,37 @@ public class Recommendation implements Serializable {
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
     }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String getCover() {
+        return cover;
+    }
+
+    public void setCover(String cover) {
+        this.cover = cover;
+    }
+
+    public String[] getAuthors() {
+        return authors;
+    }
+
+    public void setAuthors(String[] authors) {
+        this.authors = authors;
+    }
+
+    public List<String> getRatings() {
+        return ratings;
+    }
+
+    public void setRatings(List<String> ratings) {
+        this.ratings = ratings;
+    }
+
 }

@@ -12,6 +12,8 @@ import com.paulino.recomendeme_challenge.types.RecommendationType;
 public interface RecommendationRepository extends JpaRepository<Recommendation, UUID> {
     public List<Recommendation> findByType(RecommendationType type);
 
+    public List<Recommendation> findByUserId(String userId);
+
     @Query("SELECT COUNT(r) FROM Recommendation r WHERE r.type = :type")
     long recommendationsQuantityByType(RecommendationType type);
 }

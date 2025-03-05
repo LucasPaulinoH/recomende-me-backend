@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.paulino.recomendeme_challenge.dtos.Recommendation.CreateRecommendationDTO;
-import com.paulino.recomendeme_challenge.dtos.Recommendation.UpdateRecommendationDTO;
 import com.paulino.recomendeme_challenge.model.Recommendation;
 import com.paulino.recomendeme_challenge.repositories.RecommendationRepository;
 import com.paulino.recomendeme_challenge.types.RecommendationType;
@@ -38,6 +37,10 @@ public class RecommendationService {
         return recommendationRepository.findByType(recommendationType);
     }
 
+    public List<Recommendation> getAllRecommendationsFromAUserId(String userId) {
+        return recommendationRepository.findByUserId(userId);
+    }
+
     public ResponseEntity<Object> getRecommendation(UUID id) {
         Optional<Recommendation> foundedRecommendation = recommendationRepository.findById(id);
 
@@ -60,14 +63,22 @@ public class RecommendationService {
         return recommendationsQuantity;
     }
 
-    public ResponseEntity<Object> updateRecommendation(UUID id, UpdateRecommendationDTO updateRecommendationDTO) {
-        Optional<Recommendation> foundedRecommendation = recommendationRepository.findById(id);
+    public ResponseEntity<Object> updateRecommendationRating(UUID recommendationId, String userId)
+            throws BadRequestException {
+        Optional<Recommendation> foundedRecommendation = recommendationRepository.findById(recommendationId);
 
         if (foundedRecommendation.isEmpty())
             return Functions.returnNotFoundResponseEntity("Recommendation");
 
+        if (foundedRecommendation.get().getUserId().equals(userId))
+            throw new BadRequestException("Recommendation creator can't rate it.");
+
         Recommendation updatedRecommendation = foundedRecommendation.get();
-        BeanUtils.copyProperties(updateRecommendationDTO, updatedRecommendation);
+
+        if (updatedRecommendation.getRatings().contains(userId))
+            updatedRecommendation.getRatings().remove(userId);
+        else
+            updatedRecommendation.getRatings().add(userId);
 
         return Functions.returnOkResponseEntity(recommendationRepository.save(updatedRecommendation));
     }
